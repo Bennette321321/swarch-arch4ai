@@ -29,14 +29,14 @@ _large model ให้อะไรเพิ่ม และต้องแลก
 
 | Run       | run time (s) | p50 ms | p95 ms | errors | pending | accuracy |
 | --------- | ------------ | ------ | ------ | ------ | ------- | -------- |
-| t1-before |              | 259    | 488    | 18     | 0       | 92.9%    |
-| t1-after  |              | 417    | 1022   | 0      | 21      | 92.7%    |
+| t1-before | 29.0         | 238    | 369    | 20     | 0       | 92.8%    |
+| t1-after  | 10.0         | 426    | 1019   | 0      | 19      | 93.4%    |
 
 **Q1.1** In `t1-before`, p50 can look _better_ than the baseline. Why is p50 misleading here? Which column tells the real story?
 
 _ใน `t1-before` ค่า p50 อาจดู "ดีกว่า" baseline ทำไม p50 จึงทำให้เข้าใจผิดในกรณีนี้ และ column ไหนบอกความจริง_
 
-> p50 บอกแค่ request ตรงกลาง จึงไม่สะท้อน request ที่ค้างหรือล้มเหลวซึ่งอยู่ปลายหาง ความจริงอยู่ที่ column `errors` (18 รายการที่ไม่ได้คำตอบภายใน 10 วินาที) และเวลาที่ run ใช้ทั้งหมด
+> p50 ของ t1-before (238 ms) ดูดีกว่า baseline (506 ms) แต่ p50 บอกแค่ request ตรงกลาง ไม่สะท้อน request ที่ค้างหรือ error ความจริงอยู่ที่ column `errors` (20 รายการ) และเวลาที่ run ใช้ ซึ่งยาวถึง 29.0 วินาที เทียบกับ 10.0 วินาทีหลังมี fallback
 
 **Q1.2** The hang affects only 10% of large-model calls. Why is it worse for the system than 10% of reviews being slow? Think about what a waiting request holds on to in the review service and the gateway.
 
@@ -108,4 +108,4 @@ _สัปดาห์หน้าจะ deploy large model ตัวใหม�
 
 _ยกตัวอย่างหนึ่งสิ่งที่ได้เรียนรู้จากการวัดผลครั้งนี้ ที่ไม่มีพูดถึงใน lecture_
 
-> p95 ของ `t1-after` สูงขึ้นเป็น 1022 ms (เกิน 1 วินาทีของ QR1) เพราะรีวิวที่ pending ต้องรอ timeout ครบก่อน fallback ทำให้ error เป็น 0 แต่ไม่ได้ทำให้ระบบเร็วขึ้น และ cache ลด p50 ได้มาก (375 เหลือ 14 ms) แต่แทบไม่ช่วย p95
+> p95 ของ `t1-after` สูงขึ้นเป็น 1019 ms (เกิน 1 วินาทีของ QR1) เพราะรีวิวที่ pending ต้องรอ timeout ครบก่อน fallback ทำให้ error เป็น 0 แต่ไม่ได้ทำให้ระบบเร็วขึ้น และ cache ลด p50 ได้มาก (375 เหลือ 14 ms) แต่แทบไม่ช่วย p95
